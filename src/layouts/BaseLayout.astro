@@ -1,0 +1,34 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'A blog by Sam Aybar' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-white text-gray-900 antialiased">
+    <header class="border-b border-gray-200">
+      <nav class="max-w-3xl mx-auto px-4 py-6 flex items-center justify-between">
+        <a href="/" class="font-semibold text-lg hover:text-gray-600">claude-test-blog</a>
+        <a href="/" class="text-sm text-gray-500 hover:text-gray-900">Home</a>
+      </nav>
+    </header>
+    <main class="max-w-3xl mx-auto px-4 py-12">
+      <slot />
+    </main>
+    <footer class="border-t border-gray-200 mt-24">
+      <div class="max-w-3xl mx-auto px-4 py-6 text-sm text-gray-500">
+        Built with Astro &middot; Deployed on Railway
+      </div>
+    </footer>
+  </body>
+</html>
