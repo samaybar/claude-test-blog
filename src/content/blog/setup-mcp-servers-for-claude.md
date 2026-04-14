@@ -63,53 +63,62 @@ Save this too. You'll need it in Step 4.
 
 ## Step 3: Deploy the GitHub MCP Server
 
-Click this button to deploy the GitHub MCP server:
+1. Go to [railway.com/new](https://railway.com/new)
+2. Click **Deploy from GitHub repo**
+3. If prompted, connect your GitHub account
+4. Search for and select: `samaybar/github-mcp-server`
+   - Or fork [github.com/samaybar/github-mcp-server](https://github.com/samaybar/github-mcp-server) first and select your fork
+5. Railway will create the project and start building
 
-[![Deploy GitHub MCP](https://railway.com/button.svg)](https://railway.com/template?template=https://github.com/samaybar/github-mcp-server)
-
-Configure the service with these variables:
+**Add environment variables:**
+1. Click on the service in your new project
+2. Go to **Variables**
+3. Add these variables:
 
 | Variable | Value |
 |----------|-------|
 | `GITHUB_TOKEN` | The `ghp_...` token from Step 1 |
 | `AUTH_PASSWORD` | Choose a password (you'll use this to connect Claude) |
+| `DATA_DIR` | `/app/data` |
 
-Click **Deploy** and wait for the build to complete (about 2 minutes).
+**Add a volume for persistent auth:**
+1. Go to **Settings** > **Volumes**
+2. Click **Add Volume**
+3. Set mount path to `/app/data`
+
+**Generate a public domain:**
+1. Go to **Settings** > **Networking**
+2. Click **Generate Domain**
+3. Note the URL (e.g., `github-mcp-server-production-xxxx.up.railway.app`)
 
 ## Step 4: Deploy the Railway MCP Server
 
-Click this button to deploy the Railway MCP server:
+Repeat the same process for the Railway MCP server:
 
-[![Deploy Railway MCP](https://railway.com/button.svg)](https://railway.com/template?template=https://github.com/samaybar/railway-mcp-server)
+1. Go to [railway.com/new](https://railway.com/new)
+2. Click **Deploy from GitHub repo**
+3. Search for and select: `samaybar/railway-mcp-server`
+   - Or fork [github.com/samaybar/railway-mcp-server](https://github.com/samaybar/railway-mcp-server) first
 
-Configure the service with these variables:
+**Add environment variables:**
 
 | Variable | Value |
 |----------|-------|
 | `RAILWAY_API_TOKEN` | The token from Step 2 |
 | `AUTH_PASSWORD` | Choose a password (can be different from the GitHub one) |
+| `DATA_DIR` | `/app/data` |
 
-Click **Deploy** and wait for the build to complete.
+**Add a volume:**
+1. Go to **Settings** > **Volumes**
+2. Click **Add Volume**
+3. Set mount path to `/app/data`
 
-## Step 5: Generate Public Domains
+**Generate a public domain:**
+1. Go to **Settings** > **Networking**
+2. Click **Generate Domain**
+3. Note this URL too (e.g., `railway-mcp-server-production-xxxx.up.railway.app`)
 
-Railway doesn't expose services publicly by default. You need to generate a domain for each MCP server.
-
-**For the GitHub MCP server:**
-1. Open your GitHub MCP project in Railway
-2. Click on the service
-3. Go to **Settings** > **Networking**
-4. Click **Generate Domain**
-5. Note the URL (e.g., `github-mcp-server-production-xxxx.up.railway.app`)
-
-**For the Railway MCP server:**
-1. Open your Railway MCP project in Railway
-2. Click on the service
-3. Go to **Settings** > **Networking**
-4. Click **Generate Domain**
-5. Note this URL too (e.g., `railway-mcp-server-production-xxxx.up.railway.app`)
-
-## Step 6: Connect Both Servers to Claude.ai
+## Step 5: Connect Both Servers to Claude.ai
 
 Now let's wire everything up to Claude.
 
@@ -138,7 +147,7 @@ Now let's wire everything up to Claude.
 
 You now have both MCP servers connected!
 
-## Step 7: Test Both Connections
+## Step 6: Test Both Connections
 
 Start a new conversation with Claude and verify both connections work:
 
@@ -193,13 +202,13 @@ Claude.ai <--OAuth--> Your MCP Server <--API Token--> GitHub/Railway
 ## Troubleshooting
 
 **"Unknown client_id" error when connecting**
-Your server probably redeployed and lost its auth state. The template includes a volume to prevent this, but if it happens, just remove and re-add the MCP connection in Claude.
+The server lost its auth state. Make sure you added a volume mounted at `/app/data`. If the error persists, remove and re-add the MCP connection in Claude.
 
 **"Failed to create repo" error**
 Make sure you used a Classic token with the `repo` scope, not a fine-grained token.
 
 **Server not responding**
-Check the Railway dashboard to make sure the service is running. Also verify you generated a public domain in Step 5.
+Check the Railway dashboard to make sure the service is running. Verify you generated a public domain.
 
 **Can't find the service URL**
 Go to your Railway project, click on the service, then Settings > Networking. The domain is listed there.
