@@ -59,77 +59,87 @@ Save this somewhere safe. You'll need it in Step 3.
 3. Give it a name like "Claude MCP Server"
 4. **Copy the token immediately**
 
-Save this too. You'll need it in Step 4.
+Save this too. You'll need it in Step 3.
 
-## Step 3: Deploy the GitHub MCP Server
+## Step 3: Deploy Both MCP Servers
 
-Now for the fun part. Click this button:
+Click this button to deploy both servers in a single Railway project:
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template?template=https://github.com/samaybar/github-mcp-server)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template?template=https://github.com/samaybar/mcp-servers)
 
-Railway will ask you to configure the service. Fill in:
+Railway will create two services. Configure each one:
 
+**For github-mcp:**
 | Variable | Value |
 |----------|-------|
 | `GITHUB_TOKEN` | The `ghp_...` token from Step 1 |
-| `AUTH_PASSWORD` | Choose a password (you'll enter this when connecting Claude) |
+| `AUTH_PASSWORD` | Choose a password for this service |
 
-Leave `PUBLIC_URL` and `DATA_DIR` alone - Railway sets these automatically.
-
-Click **Deploy** and wait about 2 minutes for the build to complete.
-
-Once deployed, find your service URL in Railway. It'll look like:
-```
-https://github-mcp-server-production-xxxx.up.railway.app
-```
-
-Save this URL - you'll need it to connect Claude.
-
-## Step 4: Deploy the Railway MCP Server
-
-Same process, different template. Click:
-
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template?template=https://github.com/samaybar/railway-mcp-server)
-
-Fill in:
-
+**For railway-mcp:**
 | Variable | Value |
 |----------|-------|
 | `RAILWAY_API_TOKEN` | The token from Step 2 |
-| `AUTH_PASSWORD` | Choose a password (can be different from the GitHub one) |
+| `AUTH_PASSWORD` | Choose a password for this service |
 
-Deploy and wait for it to finish. Note this URL too:
-```
-https://railway-mcp-server-production-xxxx.up.railway.app
-```
+Click **Deploy** and wait about 2 minutes for both services to build.
 
-## Step 5: Connect to Claude.ai
+## Step 4: Generate Public Domains
+
+Railway doesn't expose services publicly by default. You need to generate a domain for each MCP server.
+
+1. In your Railway project, click on the **github-mcp** service
+2. Go to **Settings** > **Networking**
+3. Click **Generate Domain**
+4. Note the URL (e.g., `github-mcp-production-xxxx.up.railway.app`)
+
+Repeat for **railway-mcp**:
+1. Click on the **railway-mcp** service
+2. Go to **Settings** > **Networking**
+3. Click **Generate Domain**
+4. Note this URL too (e.g., `railway-mcp-production-xxxx.up.railway.app`)
+
+## Step 5: Connect Both Servers to Claude.ai
 
 Now let's wire everything up to Claude.
 
+### Connect the GitHub MCP Server
+
 1. Open [Claude.ai](https://claude.ai)
-2. Go to **Settings** > **Integrations** (or look for MCP settings)
+2. Go to **Settings** > **Integrations**
 3. Click **Add MCP Server**
 4. Enter your GitHub MCP URL with `/mcp` at the end:
    ```
-   https://github-mcp-server-production-xxxx.up.railway.app/mcp
+   https://github-mcp-production-xxxx.up.railway.app/mcp
    ```
-5. When prompted, enter the `AUTH_PASSWORD` you chose
-6. Repeat for the Railway MCP server
+5. When prompted, enter the `AUTH_PASSWORD` you chose for github-mcp
+6. Claude should confirm the connection
 
-## Step 6: Test It Out
+### Connect the Railway MCP Server
 
-Start a new conversation with Claude and try:
+1. Still in Claude.ai Settings > Integrations
+2. Click **Add MCP Server** again
+3. Enter your Railway MCP URL with `/mcp` at the end:
+   ```
+   https://railway-mcp-production-xxxx.up.railway.app/mcp
+   ```
+4. When prompted, enter the `AUTH_PASSWORD` you chose for railway-mcp
+5. Claude should confirm this connection too
+
+You now have both MCP servers connected!
+
+## Step 6: Test Both Connections
+
+Start a new conversation with Claude and verify both connections work:
 
 > "Check my GitHub connection"
 
-Claude should respond with your GitHub username, confirming the connection works.
-
-Then try:
+Claude should respond with your GitHub username, confirming the GitHub MCP is working.
 
 > "Check my Railway connection"
 
-You should see your Railway account info.
+Claude should respond with your Railway account info, confirming the Railway MCP is working.
+
+If both work, you're all set!
 
 ## What Can You Do Now?
 
@@ -178,14 +188,18 @@ Your server probably redeployed and lost its auth state. The template includes a
 Make sure you used a Classic token with the `repo` scope, not a fine-grained token.
 
 **Server not responding**
-Check the Railway dashboard to make sure the service is running. Look at the logs for any startup errors.
+Check the Railway dashboard to make sure the service is running. Also verify you generated a public domain in Step 4.
+
+**Can't find the service URL**
+Go to your Railway project, click on the service, then Settings > Networking. The domain is listed there.
 
 ## Wrapping Up
 
 You now have Claude.ai connected to your GitHub and Railway accounts. This opens up a lot of possibilities - from quick repo management to full deployment workflows, all through natural conversation.
 
 The source code for both servers is open:
-- [github-mcp-server](https://github.com/samaybar/github-mcp-server)
-- [railway-mcp-server](https://github.com/samaybar/railway-mcp-server)
+- [Combined bundle](https://github.com/samaybar/mcp-servers) (deploys both)
+- [github-mcp-server](https://github.com/samaybar/github-mcp-server) (standalone)
+- [railway-mcp-server](https://github.com/samaybar/railway-mcp-server) (standalone)
 
 Feel free to fork them, add more tools, or adapt them for your own needs.
